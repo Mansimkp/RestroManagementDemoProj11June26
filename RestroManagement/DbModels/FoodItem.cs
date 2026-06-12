@@ -18,7 +18,7 @@ namespace RestroManagement.DbModels
         public bool IsAvailable { get; set; }
         
         // Defines if price is fixed per portion or calculated proportionally
-        public PriceCalculationMethod PriceCalculationMethod { get; set; } = PriceCalculationMethod.Fixed;
+        public PriceCalculationMethod PriceCalculationMethod { get; set; } = PriceCalculationMethod.Fixed;    
 
         public DateTime Created { get; set; }
         public DateTime LastUpdated { get; set; }

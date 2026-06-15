@@ -21,6 +21,16 @@ namespace RestroManagement.Data
         public DbSet<FoodItemPortion> FoodItemPortions { get; set; }
         public DbSet<FoodItemImage> FoodItemImages { get; set; }
 
+        // Master Data
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<City> Cities { get; set; }
+
+        // Merchant Management
+        public DbSet<Merchant> Merchants { get; set; }
+        public DbSet<Store> Stores { get; set; }
+        public DbSet<MerchantStaff> MerchantStaffs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

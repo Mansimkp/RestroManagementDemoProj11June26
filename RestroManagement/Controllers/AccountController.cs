@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RestroManagement.Data;
+using RestroManagement.DbModels;
 using RestroManagement.DbModels.User;
+using RestroManagement.Services;
+using RestroManagement.ViewModels;
 
 namespace RestroManagement.Controllers
 {
@@ -11,10 +15,10 @@ namespace RestroManagement.Controllers
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
-        private readonly AppDbContext _context;
+        private readonly AppDBContext _context;
         private readonly IAccountService _userService;
         private readonly ILogger<AccountController> _logger;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, AppDbContext context, IAccountService userService, ILogger<AccountController> logger)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, AppDBContext context, IAccountService userService, ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;

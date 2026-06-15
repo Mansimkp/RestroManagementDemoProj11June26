@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using RestroManagement.DbModels;
+using RestroManagement.DbModels.User;
 
 namespace RestroManagement.Data
 {
-    public class AppDBContext : DbContext
+    public class AppDBContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
     {
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
@@ -35,6 +38,13 @@ namespace RestroManagement.Data
                 .HasOne(fc => fc.Category)
                 .WithMany(c => c.FoodItemCategories)
                 .HasForeignKey(fc => fc.CategoryId);
+
+
+            modelBuilder.Entity<AppUser>().ToTable("AppUser");
+            modelBuilder.SeedRoles();
+            modelBuilder.SeedCountry();
+            modelBuilder.SeedState();
+            modelBuilder.SeedCities();
         }
     }
 }

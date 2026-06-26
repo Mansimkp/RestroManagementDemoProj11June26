@@ -1,0 +1,177 @@
+@model RestroManagement.DbModels.Order
+
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<style>
+    :root {
+        --primary-brand: #E63946;
+        --neutral-dark: #1F2937;
+        --veg-green: #2EC4B6;
+    }
+
+    .success-card {
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .success-header {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .success-icon {
+        font-size: 4.5rem;
+        animation: pulse 2s infinite;
+    }
+
+    .details-section {
+        background-color: #F9FAFB;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 30px;
+    }
+
+    .receipt-table th {
+        background-color: #F3F4F6;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    .receipt-table td {
+        padding: 12px;
+        font-weight: 500;
+    }
+
+    .grand-total-row {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--primary-brand);
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+        100% { transform: scale(1); }
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card success-card">
+                <!-- Success Header -->
+                <div class="success-header">
+                    <div class="success-icon mb-3">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h2 class="fw-bold mb-1">Order Confirmed!</h2>
+                    <p class="mb-0 opacity-90">Thank you for dining with us. Your order has been sent to the kitchen.</p>
+                </div>
+
+                <!-- Receipt details -->
+                <div class="card-body p-5">
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <span class="text-muted small">ORDER NUMBER</span>
+                            <h5 class="fw-bold text-dark">#RESTRO-@Model.Id</h5>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <span class="text-muted small">DATE & TIME</span>
+                            <h5 class="fw-bold text-dark">@Model.OrderDate.ToString("dd MMM yyyy, hh:mm tt")</h5>
+                        </div>
+                    </div>
+
+                    <!-- Customer Details -->
+                    <div class="details-section">
+                        <h5 class="fw-bold mb-3 text-dark">Customer Details</h5>
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <span class="text-muted small d-block">NAME</span>
+                                <span class="fw-bold text-dark">@Model.CustomerName</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted small d-block">MOBILE NUMBER</span>
+                                <span class="fw-bold text-dark">@Model.MobileNumber</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items Ordered -->
+                    <h5 class="fw-bold mb-3 text-dark">Dishes Prepared</h5>
+                    <div class="table-responsive mb-4">
+                        <table class="table receipt-table align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-start">Item</th>
+                                    <th>Portion</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Items != null)
+                                {
+                                    foreach (var item in Model.Items)
+                                    {
+                                        var total = item.Price * item.Quantity;
+                                        <tr>
+                                            <td class="text-start fw-bold text-dark">@item.FoodItem?.Name</td>
+                                            <td>
+                                                <span class="badge bg-light text-dark border">
+                                                    @(item.Portion?.Name ?? "Regular")
+                                                </span>
+                                            </td>
+                                            <td>₹@item.Price</td>
+                                            <td>@item.Quantity</td>
+                                            <td class="text-end fw-bold">₹@total</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Charges Breakdown -->
+                    <div class="row justify-content-end">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Subtotal</span>
+                                <span class="fw-bold">₹@Model.TotalPrice</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">SGST (5%)</span>
+                                <span>₹@Model.SGST.ToString("F2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">CGST (5%)</span>
+                                <span>₹@Model.CGST.ToString("F2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Packaging Charges</span>
+                                <span>₹@Model.PackagingCharges</span>
+                            </div>
+                            <div class="d-flex justify-content-between pt-3 border-top mt-3 grand-total-row">
+                                <span>Grand Total</span>
+                                <span>₹@Model.OrderTotal.ToString("F2")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <a asp-controller="Home" asp-action="Menu" class="btn btn-danger btn-lg px-5 py-3 fw-bold" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);">
+                            Order More Items
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

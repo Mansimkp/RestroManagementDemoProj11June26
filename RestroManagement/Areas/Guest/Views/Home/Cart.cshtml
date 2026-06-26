@@ -1,73 +1,328 @@
-﻿@{
+@model List<RestroManagement.ViewModels.CartItem>
+
+@{
     ViewData["Title"] = "Cart";
 }
 
-<div class="container py-5">
+<style>
+    :root {
+        --primary-brand: #E63946;
+        --primary-brand-hover: #d62d3a;
+        --neutral-dark: #1F2937;
+        --neutral-light: #FFF8F3;
+    }
 
+    .cart-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .table-container {
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background-color: var(--primary-brand);
+        color: white;
+    }
+
+    .table th {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        padding: 18px;
+        border: none;
+    }
+
+    .table td {
+        padding: 18px;
+        font-weight: 500;
+        vertical-align: middle;
+    }
+
+    .delete-btn {
+        background: transparent;
+        border: none;
+        color: var(--primary-brand);
+        font-size: 1.25rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        padding: 4px 8px;
+    }
+
+    .delete-btn:hover {
+        color: var(--primary-brand-hover);
+        transform: scale(1.15);
+    }
+
+    .summary-card {
+        background-color: #F9FAFB;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #E5E7EB;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-weight: 500;
+        color: #4B5563;
+    }
+
+    .summary-row.total {
+        font-weight: 800;
+        font-size: 1.3rem;
+        color: var(--neutral-dark);
+        border-top: 2px dashed #E5E7EB;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+
+    /* Editable Input Styling */
+    .cart-edit-input {
+        border-radius: 8px;
+        border: 1px solid #D1D5DB;
+        padding: 6px 12px;
+        font-weight: 600;
+        color: var(--neutral-dark);
+        transition: all 0.2s;
+    }
+
+    .cart-edit-input:focus {
+        border-color: var(--primary-brand);
+        box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
+        outline: none;
+    }
+
+    .portion-select {
+        border-radius: 8px;
+        border: 1px solid #D1D5DB;
+        padding: 6px 12px;
+        font-weight: 600;
+        color: var(--neutral-dark);
+    }
+
+    .portion-select:focus {
+        border-color: var(--primary-brand);
+        box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
+        outline: none;
+    }
+</style>
+
+<div class="container py-5">
     <!-- Page Heading -->
     <div class="text-center mb-5">
-        <h1 class="fw-bold text-danger">🛒 Your Cart</h1>
-        <p class="lead text-muted">
-            Review your selected items before checkout.
-        </p>
+        <h1 class="fw-bold text-danger">🛒 Your Cart / Bill details</h1>
+        <p class="lead text-muted">Modify portions and quantity directly below. Pricing is locked and updates automatically with the portion.</p>
     </div>
 
-    <!-- Cart Card -->
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-
-            <div class="card shadow border-0">
-                <div class="card-body p-4">
-
-                    <table class="table table-bordered text-center align-middle">
-                        <thead class="table-danger">
-                            <tr>
-                                <th>Item</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>@TempData["Item"]</td>
-                                <td>₹@TempData["Price"]</td>
-                                <td>@TempData["Quantity"]</td>
-                                <td>
-                                    ₹@(Convert.ToInt32(TempData["Price"]) * Convert.ToInt32(TempData["Quantity"]))
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Summary -->
-                    <div class="text-end mt-4">
-                        <h4 class="text-success">
-                            Grand Total:
-                            ₹@(Convert.ToInt32(TempData["Price"]) * Convert.ToInt32(TempData["Quantity"]))
-                        </h4>
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x text-muted" style="font-size: 5rem; opacity: 0.4;"></i>
+            <h3 class="mt-4 text-dark fw-bold">Your cart is empty</h3>
+            <p class="text-muted mb-4">Add some delicious dishes from our menu to get started!</p>
+            <a asp-controller="Home" asp-action="Menu" class="btn btn-danger btn-lg px-4" style="border-radius: 12px;">
+                Explore Menu
+            </a>
+        </div>
+    }
+    else
+    {
+        <form asp-controller="Home" asp-action="UpdateCart" method="post" id="cartForm">
+            <div class="row">
+                <!-- Cart Items Table -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card cart-card">
+                        <div class="card-body p-4">
+                            <div class="table-responsive table-container">
+                                <table class="table align-middle text-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-start">Item</th>
+                                            <th>Portion</th>
+                                            <th>Price (₹)</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td class="text-start fw-bold text-dark">
+                                                    @item.ItemName
+                                                    <input type="hidden" name="FoodItemId" value="@item.FoodItemId" />
+                                                    <input type="hidden" name="ItemName" value="@item.ItemName" />
+                                                </td>
+                                                <td>
+                                                    <!-- Editable Portion Selection -->
+                                                    @if (item.Portions != null && item.Portions.Count > 1)
+                                                    {
+                                                        <select name="PortionName" class="form-select form-select-sm portion-select mx-auto" style="width: 130px;" onchange="updateCartPortion(this)">
+                                                            @foreach (var p in item.Portions)
+                                                            {
+                                                                bool isSelected = p.Name == item.PortionName;
+                                                                <option value="@p.Name" data-price="@p.Price" selected="@(isSelected ? "selected" : null)">
+                                                                    @p.Name
+                                                                </option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-light text-dark border px-3 py-2 fw-semibold">
+                                                            @item.PortionName
+                                                        </span>
+                                                        <input type="hidden" name="PortionName" value="@item.PortionName" />
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <!-- Read-only Price label linked to Hidden Input -->
+                                                    ₹<span class="unit-price">@item.Price.ToString("F2")</span>
+                                                    <input type="hidden" name="Price" value="@item.Price" class="price-input" />
+                                                </td>
+                                                <td>
+                                                    <!-- Editable Quantity -->
+                                                    <input type="number" name="Quantity" value="@item.Quantity" min="0" 
+                                                           class="form-control form-control-sm cart-edit-input qty-input mx-auto text-center" 
+                                                           style="width: 90px;" oninput="recalcRow(this)" />
+                                                </td>
+                                                <td class="fw-bold text-danger row-total">
+                                                    ₹@item.Total.ToString("F2")
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="delete-btn" title="Remove Item" onclick="removeRow(this)">
+                                                        <i class="bi bi-trash3-fill"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-between mt-4">
-                        <a asp-controller="Home"
-                           asp-action="Menu"
-                           class="btn btn-outline-danger btn-lg">
-                            ⬅ Continue 
-                        </a>
+                <!-- Order Summary Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card cart-card">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold text-dark mb-4">Order Summary</h4>
+                            
+                            <div class="summary-card">
+                                @{
+                                    double subtotal = Model.Sum(i => i.Total);
+                                    double sgst = subtotal * 0.05;
+                                    double cgst = subtotal * 0.05;
+                                    double packaging = 30; // Flat packaging charge
+                                    double grandTotal = subtotal + sgst + cgst + packaging;
+                                }
+                                
+                                <div class="summary-row">
+                                    <span>Items Subtotal</span>
+                                    <span id="subtotalLabel">₹@subtotal.ToString("F2")</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>SGST (5%)</span>
+                                    <span id="sgstLabel">₹@sgst.ToString("F2")</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>CGST (5%)</span>
+                                    <span id="cgstLabel">₹@cgst.ToString("F2")</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Packaging & Delivery</span>
+                                    <span>₹@packaging</span>
+                                </div>
+                                
+                                <div class="summary-row total">
+                                    <span>Grand Total</span>
+                                    <span class="text-danger" id="grandTotalLabel">₹@grandTotal.ToString("F2")</span>
+                                </div>
+                            </div>
 
-                        <a asp-controller="Order"
-                           asp-action="Checkout"
-                           class="btn btn-danger btn-lg">
-                            Proceed to place order
-                        </a>
+                            <!-- Buttons -->
+                            <div class="d-grid gap-3 mt-4">
+                                <button type="submit" name="submitAction" value="update" class="btn btn-outline-danger btn-lg py-3 fw-bold" style="border-radius: 12px;">
+                                    🔄 Update Cart
+                                </button>
+                                
+                                <button type="submit" name="submitAction" value="checkout" class="btn btn-danger btn-lg py-3 fw-bold" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);">
+                                    Proceed to place order
+                                </button>
+                                
+                                <a asp-controller="Home" asp-action="Menu" class="btn btn-outline-secondary btn-lg py-3 fw-bold" style="border-radius: 12px;">
+                                    ⬅ Continue Shopping
+                                </a>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
-
-        </div>
-    </div>
-
+        </form>
+    }
 </div>
+
+<script>
+    // Called when portion selection dropdown changes
+    function updateCartPortion(selectElement) {
+        let row = selectElement.closest('tr');
+        let selectedOption = selectElement.options[selectElement.selectedIndex];
+        let price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+
+        // Update the static unit price display and the hidden form input
+        row.querySelector('.unit-price').innerText = price.toFixed(2);
+        row.querySelector('.price-input').value = price;
+
+        // Recalculate row total and summary totals
+        recalcRow(selectElement);
+    }
+
+    // Called on quantity changes
+    function recalcRow(element) {
+        let row = element.closest('tr');
+        let price = parseFloat(row.querySelector('.price-input').value) || 0;
+        let qty = parseInt(row.querySelector('.qty-input').value) || 0;
+        let total = price * qty;
+        
+        row.querySelector('.row-total').innerText = '₹' + total.toFixed(2);
+        recalcCart();
+    }
+
+    // Recalculates all cart totals in real-time
+    function recalcCart() {
+        let subtotal = 0;
+        document.querySelectorAll('tbody tr').forEach(row => {
+            let price = parseFloat(row.querySelector('.price-input').value) || 0;
+            let qty = parseInt(row.querySelector('.qty-input').value) || 0;
+            subtotal += price * qty;
+        });
+
+        let sgst = subtotal * 0.05;
+        let cgst = subtotal * 0.05;
+        let packaging = 30;
+        let grandTotal = subtotal + sgst + cgst + packaging;
+
+        document.getElementById('subtotalLabel').innerText = '₹' + subtotal.toFixed(2);
+        document.getElementById('sgstLabel').innerText = '₹' + sgst.toFixed(2);
+        document.getElementById('cgstLabel').innerText = '₹' + cgst.toFixed(2);
+        document.getElementById('grandTotalLabel').innerText = '₹' + grandTotal.toFixed(2);
+    }
+
+    // Set quantity to 0, hide row, and submit form immediately to remove from backend session
+    function removeRow(btn) {
+        let row = btn.closest('tr');
+        row.querySelector('.qty-input').value = 0;
+        row.style.display = 'none';
+        recalcCart();
+        
+        // Auto-submit form
+        document.getElementById('cartForm').submit();
+    }
+</script>

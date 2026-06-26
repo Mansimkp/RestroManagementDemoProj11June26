@@ -1,0 +1,131 @@
+@model List<RestroManagement.ViewModels.CartItem>
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<style>
+    :root {
+        --primary-brand: #E63946;
+        --primary-brand-hover: #d62d3a;
+        --neutral-dark: #1F2937;
+        --neutral-light: #FFF8F3;
+    }
+
+    .checkout-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-control-custom {
+        height: 52px;
+        border-radius: 12px;
+        border: 2px solid #E5E7EB;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .form-control-custom:focus {
+        border-color: var(--primary-brand);
+        box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.1);
+    }
+
+    .summary-item-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-danger">📋 Place Your Order</h1>
+        <p class="lead text-muted">Complete the form below to submit your order to the kitchen.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- Customer details Form -->
+        <div class="col-lg-6 mb-4">
+            <div class="card checkout-card">
+                <div class="card-body p-5">
+                    <h4 class="fw-bold text-dark mb-4">Customer Details</h4>
+                    
+                    <form asp-controller="Order" asp-action="Checkout" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Your Name</label>
+                            <input type="text" name="CustomerName" class="form-control form-control-custom" placeholder="Enter your full name" required />
+                            <span class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Mobile Number</label>
+                            <input type="tel" name="MobileNumber" class="form-control form-control-custom" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required />
+                            <span class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg w-100 py-3 fw-bold mt-3" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);">
+                            Place Order (Cash / Pay on Table)
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary side panel -->
+        <div class="col-lg-5">
+            <div class="card checkout-card">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-dark mb-4">Order Summary</h4>
+                    
+                    <div class="mb-4">
+                        @foreach (var item in Model)
+                        {
+                            <div class="summary-item-row">
+                                <div>
+                                    <span class="fw-bold">@item.ItemName</span>
+                                    <span class="badge bg-light text-dark border ms-2">@item.PortionName</span>
+                                    <div class="small text-muted">Qty: @item.Quantity</div>
+                                </div>
+                                <span class="fw-bold text-danger">₹@item.Total</span>
+                            </div>
+                        }
+                    </div>
+
+                    @{
+                        double subtotal = Model.Sum(i => i.Total);
+                        double sgst = subtotal * 0.05;
+                        double cgst = subtotal * 0.05;
+                        double packaging = 30;
+                        double grandTotal = subtotal + sgst + cgst + packaging;
+                    }
+
+                    <div class="p-3 bg-light rounded-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal</span>
+                            <span class="fw-semibold">₹@subtotal</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Taxes (SGST + CGST)</span>
+                            <span class="fw-semibold">₹@((sgst + cgst).ToString("F2"))</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Packaging Charges</span>
+                            <span class="fw-semibold">₹@packaging</span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3 pt-3 border-top border-2 border-white">
+                            <span class="fw-bold text-dark">Grand Total</span>
+                            <span class="fw-bold text-danger fs-5">₹@grandTotal.ToString("F2")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

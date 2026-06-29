@@ -57,12 +57,12 @@
                 
                 <div class="row">
                     <div class="col-md-7 form-group">
-                        <label asp-for="StoreName" class="form-label">Restaurant Name</label>
+                        <label asp-for="StoreName" class="form-label required">Restaurant Name</label>
                         <input asp-for="StoreName" class="form-control" placeholder="e.g. The Grand Kitchen" />
                         <span asp-validation-for="StoreName" class="text-danger small"></span>
                     </div>
                     <div class="col-md-5 form-group">
-                        <label asp-for="BusinessType" class="form-label">Type</label>
+                        <label asp-for="BusinessType" class="form-label required">Type</label>
                         <select asp-for="BusinessType" class="form-select">
                             <option value="">Select Type</option>
                             <option value="Dine-in">Dine-in</option>
@@ -75,30 +75,30 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="StoreAddress" class="form-label">Restaurant Address</label>
+                    <label asp-for="StoreAddress" class="form-label required">Restaurant Address</label>
                     <input asp-for="StoreAddress" class="form-control" placeholder="Full address" />
                     <span asp-validation-for="StoreAddress" class="text-danger small"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="BusinessLicense" class="form-label"></label>
+                    <label asp-for="BusinessLicense" class="form-label required"></label>
                     <input asp-for="BusinessLicense" class="form-control" placeholder="Enter business license" />
                     
                 </div>
 
                 <div class="row">
                     <div class="col-md-4 form-group">
-                        <label asp-for="City" class="form-label">City</label>
+                        <label asp-for="City" class="form-label required">City</label>
                         <input asp-for="City" class="form-control" placeholder="City" />
                         <span asp-validation-for="City" class="text-danger small"></span>
                     </div>
                     <div class="col-md-4 form-group">
-                        <label asp-for="State" class="form-label">State</label>
+                        <label asp-for="State" class="form-label required">State</label>
                         <input asp-for="State" class="form-control" placeholder="State" />
                         <span asp-validation-for="State" class="text-danger small"></span>
                     </div>
                     <div class="col-md-4 form-group">
-                        <label asp-for="ZipCode" class="form-label">Zip Code</label>
+                        <label asp-for="ZipCode" class="form-label required">Zip Code</label>
                         <input asp-for="ZipCode" class="form-control" placeholder="Zip" />
                         <span asp-validation-for="ZipCode" class="text-danger small"></span>
                     </div>
@@ -108,12 +108,12 @@
 
                 <div class="row">
                     <div class="col-md-6 form-group">
-                        <label asp-for="FName" class="form-label">First Name</label>
+                        <label asp-for="FName" class="form-label required">First Name</label>
                         <input asp-for="FName" class="form-control" />
                         <span asp-validation-for="FName" class="text-danger small"></span>
                     </div>
                     <div class="col-md-6 form-group">
-                        <label asp-for="LName" class="form-label">Last Name</label>
+                        <label asp-for="LName" class="form-label required">Last Name</label>
                         <input asp-for="LName" class="form-control" />
                         <span asp-validation-for="LName" class="text-danger small"></span>
                     </div>
@@ -121,19 +121,20 @@
 
                 <div class="row">
                     <div class="col-md-7 form-group">
-                        <label asp-for="Email" class="form-label">Owner Email</label>
+                        <label asp-for="Email" class="form-label required">Owner Email</label>
                         <input asp-for="Email" class="form-control" />
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
                     <div class="col-md-5 form-group">
-                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <label asp-for="PhoneNumber" class="form-label required">Phone Number</label>
                         <input asp-for="PhoneNumber" class="form-control" />
                         <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6 form-group"><label asp-for="Password" class="form-label">Password</label>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Password" class="form-label required">Password</label>
                       <div class="input-group">
                             <input asp-for="Password" type="password" class="form-control" id="Password" />
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('Password', 'passwordIcon')">
@@ -145,7 +146,7 @@
                     </div>
 
                     <div class="col-md-6 form-group">
-                        <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                        <label asp-for="ConfirmPassword" class="form-label required">Confirm Password</label>
                         <div class="input-group"><input asp-for="ConfirmPassword" type="password"  class="form-control"id="ConfirmPassword" />
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('ConfirmPassword', 'confirmPasswordIcon')">
                                 <i class="bi bi-eye" id="confirmPasswordIcon"></i>

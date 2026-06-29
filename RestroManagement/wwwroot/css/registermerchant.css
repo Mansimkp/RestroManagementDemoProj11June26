@@ -169,3 +169,8 @@ body {
         padding: 30px;
     }
 }
+.form-label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+}

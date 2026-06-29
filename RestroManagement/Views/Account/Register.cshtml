@@ -27,31 +27,31 @@
 
             <div class="row">
                 <div class="col-md-6 form-group">
-                    <label asp-for="FName" class="form-label">First Name</label>
+                    <label asp-for="FName" class="form-label required">First Name</label>
                     <input asp-for="FName" class="form-control" placeholder="John" />
                     <span asp-validation-for="FName" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6 form-group">
-                    <label asp-for="LName" class="form-label">Last Name</label>
+                    <label asp-for="LName" class="form-label required">Last Name</label>
                     <input asp-for="LName" class="form-control" placeholder="Doe" />
                     <span asp-validation-for="LName" class="text-danger small"></span>
                 </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="Email" class="form-label">Email</label>
+                <label asp-for="Email" class="form-label required">Email</label>
                 <input asp-for="Email" class="form-control" placeholder="Email" />
                 <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="PhoneNumber" class="form-label">Phone</label>
+                <label asp-for="PhoneNumber" class="form-label required">Phone</label>
                 <input asp-for="PhoneNumber" class="form-control" placeholder="Phone number" />
                 <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Password" class="form-label">Password</label>
+                <label asp-for="Password" class="form-label required">Password</label>
                 <div class="input-group">
                  <input asp-for="Password" type="password"class="form-control"id="Password"placeholder="Password" />
                     <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('Password', 'passwordIcon')">
@@ -61,7 +61,8 @@
                 <span asp-validation-for="Password" class="text-danger small"></span>
             </div>
 
-            <div class="form-group"><label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="form-label required">Confirm Password</label>
                 <div class="input-group">
                   <input asp-for="ConfirmPassword"type="password"class="form-control"id="ConfirmPassword"placeholder="Confirm Password" />
                          <button type="button" class="btn btn-outline-secondary"onclick="togglePassword('ConfirmPassword', 'confirmPasswordIcon')">

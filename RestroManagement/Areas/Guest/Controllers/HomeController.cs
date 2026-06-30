@@ -22,10 +22,32 @@ namespace RestroManagement.Areas.Guest.Controllers
         {
             dBContext = _dBContext;
         }
+
         public IActionResult Index()
         {
             return View();
         }
+        public async Task<IActionResult> Profile()
+        {
+            var user = await dBContext.Users.FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new profile
+            {
+                FName = user.FName,
+                LName = user.LName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+
+            };
+
+            return View(model);
+        }
+
         public async Task<IActionResult> Menu()
         {
             var items = await dBContext.Fooditems

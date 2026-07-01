@@ -1,14 +1,17 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestroManagement.Data;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json;
+using RestroManagement.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using RestroManagement.DbModels.User;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-using RestroManagement.ViewModels;
-using System;
-using Microsoft.AspNetCore.Authorization;
 
 namespace RestroManagement.Areas.Guest.Controllers
 {
@@ -17,36 +20,43 @@ namespace RestroManagement.Areas.Guest.Controllers
     public class HomeController : Controller
     {
         private readonly AppDBContext dBContext;
+        private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(AppDBContext _dBContext)
+        public HomeController(
+            AppDBContext _dBContext,
+            UserManager<AppUser> userManager)
         {
             dBContext = _dBContext;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
             return View();
         }
+
         public async Task<IActionResult> Profile()
         {
-            var user = await dBContext.Users.FirstOrDefaultAsync();
+            var currentUser = await _userManager.GetUserAsync(User);
 
-            if (user == null)
+            if (currentUser == null)
             {
-                return NotFound();
+                return RedirectToAction("Login");
             }
 
             var model = new profile
             {
-                FName = user.FName,
-                LName = user.LName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
 
+                FName = currentUser.FName,
+                LName = currentUser.LName,
+                Email = currentUser.Email,
+                PhoneNumber = currentUser.PhoneNumber
             };
 
             return View(model);
         }
+    
+
 
         public async Task<IActionResult> Menu()
         {

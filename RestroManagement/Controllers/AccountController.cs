@@ -32,6 +32,10 @@ namespace RestroManagement.Controllers
         {
             return View();
         }
+        public IActionResult Index()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Register(AppUser model)

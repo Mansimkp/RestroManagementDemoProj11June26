@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RestroManagement.DbModels.User;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestroManagement.DbModels
@@ -7,6 +8,9 @@ namespace RestroManagement.DbModels
     {
         [Key]
         public int Id { get; set; }
+        public string UserId { get; set; } = string.Empty;
+
+        
         public string CustomerName { get; set; } = string.Empty;
         public string MobileNumber { get; set; } = string.Empty;
         public List<OrderItem> Items { get; set; } = new List<OrderItem>();

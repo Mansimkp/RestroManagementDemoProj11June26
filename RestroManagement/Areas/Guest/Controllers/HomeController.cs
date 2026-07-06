@@ -1,17 +1,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestroManagement.Data;
-using RestroManagement.ViewModels;
-using Microsoft.AspNetCore.Identity;
+using RestroManagement.DbModels;
 using RestroManagement.DbModels.User;
+using RestroManagement.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RestroManagement.Areas.Guest.Controllers
 {
@@ -29,15 +31,33 @@ namespace RestroManagement.Areas.Guest.Controllers
             dBContext = _dBContext;
             _userManager = userManager;
         }
-
         public IActionResult Index()
         {
             return View();
         }
+        public async Task<IActionResult> Profile1()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var orders = dBContext.Orders
+                .Where(x => x.UserId == user.Id.ToString())
+                      .ToList();
+
+            ViewBag.Orders = orders ?? new List<Order>();
+
+            return View(user);
+        }
+
 
         public async Task<IActionResult> Profile()
         {
             var currentUser = await _userManager.GetUserAsync(User);
+
 
             if (currentUser == null)
             {
@@ -47,6 +67,7 @@ namespace RestroManagement.Areas.Guest.Controllers
             var model = new profile
             {
 
+                Id = currentUser.Id,
                 FName = currentUser.FName,
                 LName = currentUser.LName,
                 Email = currentUser.Email,

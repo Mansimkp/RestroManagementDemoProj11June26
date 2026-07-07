@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestroManagement.Data;
+using Microsoft.AspNetCore.Identity;
 using RestroManagement.DbModels;
+using RestroManagement.DbModels.User;
 using RestroManagement.ViewModels; 
 using System.Text.Json; 
 
@@ -12,11 +14,32 @@ namespace RestroManagement.Areas.Guest.Controllers
     //[Authorize(Roles = "Guest")]
     public class OrderController : Controller
     {
+        private readonly UserManager<AppUser> _userManager;
         private readonly AppDBContext _context;
-
-        public OrderController(AppDBContext context)
+        public OrderController(AppDBContext context,
+                       UserManager<AppUser> userManager)
+        
         {
             _context = context;
+            _userManager = userManager;
+
+        }
+        public async Task<IActionResult> MyOrders()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var orders = await _context.Orders
+                .Include(o => o.Items)
+                .Where(o => o.UserId == user.Id.ToString())
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return View(orders);
         }
 
         // GET: Guest/Order/Checkout
@@ -66,8 +89,11 @@ namespace RestroManagement.Areas.Guest.Controllers
             }
 
             // Create Order
+            var user = await _userManager.GetUserAsync(User);
             var order = new Order
             {
+
+                UserId = user.Id.ToString(),
                 CustomerName = CustomerName,
                 MobileNumber = MobileNumber,
                 OrderDate = DateTime.Now,

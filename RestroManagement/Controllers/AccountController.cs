@@ -63,11 +63,26 @@ namespace RestroManagement.Controllers
             }
             return View(model);
         }
-
         [HttpGet]
         public IActionResult RegisterMerchant()
         {
+            ViewBag.States = _context.States.ToList();
+
             return View();
+        }
+        [HttpGet]
+        public JsonResult GetCities(int stateId)
+        {
+            var cities = _context.Cities
+                .Where(x => x.StateId == stateId)
+                .Select(x => new
+                {
+                    id = x.UniqueId,
+                    name = x.Name
+                })
+                .ToList();
+
+            return Json(cities);
         }
 
         [HttpPost]
@@ -253,7 +268,8 @@ namespace RestroManagement.Controllers
 
 
         public async Task<List<City>> GetCities() => await _context.Cities.ToListAsync();
-        public async Task<List<City>> GetCitiesByStateId(int id) => await _context.Cities.Where(c => c.StateId == id).ToListAsync();
+        public async Task<List<City>> GetCitiesByStateId(int id) => 
+            await _context.Cities.Where(c => c.StateId == id).ToListAsync();
         public async Task<City> GetCity(int id) => await _context.Cities.FindAsync(id);
 
         // --- @ToDo : NOTE : Remove following methods while release.

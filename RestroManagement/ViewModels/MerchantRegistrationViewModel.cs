@@ -65,6 +65,7 @@ namespace RestroManagement.ViewModels
 
         [Required(ErrorMessage = "Zip Code is required")]
         [StringLength(10)]
+
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; } = string.Empty;
 

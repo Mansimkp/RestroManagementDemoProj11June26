@@ -1,0 +1,144 @@
+﻿@model RestroManagement.DbModels.User.AppUser
+
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<link href="~/css/profile1.css" rel="stylesheet" />
+
+
+
+<div class="profile-header">
+
+    <div class="container">
+
+        <div class="left">
+
+            <img src="#"
+                 class="profile-img" />
+
+            <div>
+
+                <h2>@(Model.FName + " " + Model.LName)</h2>
+
+                <p>@Model.PhoneNumber</p>
+
+            </div>
+
+        </div>
+        <a asp-area="Guest"
+           asp-controller="Home"
+           asp-action="Profile"
+           class="edit-btn">
+            EDIT PROFILE
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="main-area">
+
+    <div class="sidebar">
+
+        <ul>
+
+            <li class="active">
+                🛍 Orders
+            </li>
+
+            <li>
+                ⭐ Restro One
+            </li>
+
+            <li>
+                ❤ Favourites
+            </li>
+
+            <li>
+                💳 Payments
+            </li>
+
+            <li>
+                📍 Addresses
+            </li>
+
+            <li>
+                ⚙ Settings
+            </li>
+
+            <li>
+                ❓ Help
+            </li>
+
+            <li>
+                🚪 Logout
+            </li>
+
+        </ul>
+
+    </div>
+
+
+
+    <div class="content">
+
+        <h2>Past Orders</h2>
+
+        @foreach (var item in (ViewBag.Orders ?? new List<Order>()))
+        {
+            <div class="order-card">
+
+                <h3>@item.RestaurantName</h3>
+
+                <p>@item.Address</p>
+
+                <span>@item.Status</span>
+
+                <h4>Total ₹@item.TotalAmount</h4>
+
+            </div>
+        }
+
+
+        <div class="summary">
+
+            <div class="box">
+
+                <h2>15</h2>
+
+                <p>Delivered</p>
+
+            </div>
+
+            <div class="box">
+
+                <h2>2</h2>
+
+                <p>On the Way</p>
+
+            </div>
+
+            <div class="box">
+
+                <h2>0</h2>
+
+                <p>Upcoming</p>
+
+            </div>
+
+            <div class="box">
+
+                <h2>1</h2>
+
+                <p>Cancelled</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

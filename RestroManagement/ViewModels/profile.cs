@@ -1,7 +1,11 @@
-﻿namespace RestroManagement.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace RestroManagement.ViewModels
 {
     public class profile
-    { 
+    {
+        [Key]
+            public int Id { get; set; }
             public string FName { get; set; }
             public string LName { get; set; }
             public string UserName { get; set; }

@@ -87,15 +87,34 @@
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-4 form-group">
-                        <label asp-for="City" class="form-label required">City</label>
-                        <input asp-for="City" class="form-control" placeholder="City" />
-                        <span asp-validation-for="City" class="text-danger small"></span>
+
+                        <label class="form-label required">State</label>
+
+                        <select asp-for="State" id="StateId" class="form-select">
+
+                            <option value="">Select State</option>
+
+                            @foreach (var item in ViewBag.States)
+                            {
+                                <option value="@item.UniqueId">
+                                    @item.Name
+                                </option>
+                            }
+
+                        </select>
+
                     </div>
                     <div class="col-md-4 form-group">
-                        <label asp-for="State" class="form-label required">State</label>
-                        <input asp-for="State" class="form-control" placeholder="State" />
-                        <span asp-validation-for="State" class="text-danger small"></span>
+
+                        <label class="form-label required">City</label>
+
+                        <select asp-for="City" id="CityId" class="form-select">
+
+                            <option value="">Select City</option>
+
+                        </select>
                     </div>
                     <div class="col-md-4 form-group">
                         <label asp-for="ZipCode" class="form-label required">Zip Code</label>
@@ -166,6 +185,7 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/Address.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

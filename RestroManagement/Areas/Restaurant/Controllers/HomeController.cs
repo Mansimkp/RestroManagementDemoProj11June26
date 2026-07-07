@@ -33,5 +33,15 @@ namespace RestroManagement.Areas.Restaurant.Controllers
 
             return View(recentOrders);
         }
+        // GET: Guest/Home/Customers
+        public async Task<IActionResult> Customers()
+        {
+            // Get all users from the database (AppUser)
+            var users = await _context.Users.ToListAsync();
+            return View(users);
+        }
+
+
+
     }
 }

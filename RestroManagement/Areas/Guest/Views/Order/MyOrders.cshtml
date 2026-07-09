@@ -1,24 +1,89 @@
 ﻿@model IEnumerable<RestroManagement.DbModels.Order>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Order Id</th>
-            <th>Customer</th>
-            <th>Mobile</th>
-            <th>Order Date</th>
-        </tr>
-    </thead>
+@{
+    ViewData["Title"] = "My Orders";
+    var orders = Model.ToList();
+}
 
-    <tbody>
-    @foreach (var order in Model)
+<link rel="stylesheet" href="~/css/myorders.css" asp-append-version="true" />
+
+<div class="container py-5">
+    <h2 class="text-center order-page-title">
+        🍽 My Orders
+    </h2>
+    @if (!orders.Any())
     {
-        <tr>
-            <td>@order.Id</td>
-            <td>@order.CustomerName</td>
-            <td>@order.MobileNumber</td>
-            <td>@order.OrderDate.ToString("dd-MM-yyyy hh:mm tt")</td>
-        </tr>
+        <div class="alert alert-info text-center">
+            No orders found.
+        </div>
     }
-    </tbody>
-</table>
+    else
+    {
+        @for (int i = 0; i < orders.Count; i++)
+        {
+            var order = orders[i];
+            <div class="card order-card mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="order-title">
+                                🛒 Order @(i + 1)
+                            </h5>
+                            <div class="order-date">
+                                @order.OrderDate.ToString("dd MMM yyyy • hh:mm tt")
+                            </div>
+                        </div>
+                        <span class="badge bg-success status">
+                            Confirmed
+                        </span>
+                    </div>
+                    <hr />
+                    <div class="food-preview mb-3">
+                        @{
+                            var names = order.Items
+                                .Select(x => x.FoodItem?.Name)
+                                .Where(x => !string.IsNullOrEmpty(x))
+                                .ToList();
+                        }
+                        @if (names.Any())
+                        {
+                            @if (names.Count <= 2)
+                            {
+                                @string.Join(", ", names)
+                            }
+                            else
+                            {
+                                @(string.Join(", ", names.Take(2)) + $" +{names.Count - 2} more")
+                            }
+                        }
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <small class="text-muted">Items</small>
+                            <h5>@order.Items.Count</h5>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted">Total Bill</small>
+                            <div class="amount">
+                                ₹@order.OrderTotal.ToString("F2")
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a asp-action="OrderDetails"
+                               asp-route-id="@order.Id"
+                               class="btn btn-outline-danger btn-view">
+                                View Details
+                            </a>
+                            <a asp-controller="Home"
+                               asp-action="Menu"
+                               class="btn btn-danger btn-reorder ms-2">
+                                Reorder
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+</div>

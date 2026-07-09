@@ -34,14 +34,36 @@ namespace RestroManagement.Areas.Guest.Controllers
             }
 
             var orders = await _context.Orders
-                .Include(o => o.Items)
-                .Where(o => o.UserId == user.Id.ToString())
-                .OrderByDescending(o => o.OrderDate)
-                .ToListAsync();
+               .Include(o => o.Items)
+                  .ThenInclude(i => i.FoodItem)
+               .Include(o => o.Items)
+                  .ThenInclude(i => i.Portion)
+               .Where(o => o.UserId == user.Id.ToString()).OrderByDescending(o => o.OrderDate).ToListAsync();
+           
 
             return View(orders);
         }
+        public async Task<IActionResult> OrderDetails(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
 
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.FoodItem)
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Portion)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == user.Id.ToString());
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
         // GET: Guest/Order/Checkout
         public IActionResult Checkout()
         {

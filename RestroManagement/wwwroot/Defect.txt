@@ -1,6 +1,6 @@
-﻿Footer fixing in guest
-Packaging charges should be optional not necessary for all orders.
+﻿Packaging charges should be optional not necessary for all orders.
 Login details (In which time which user loggedIn).
-Filters of veg , non-veg
-After adding items in cart when return back to menu then cart refreshed .	 	 	 	 	 	 	 	 
-dropdown of city and state of restaurant registration	 	 	 	 
+Filters of veg , non-veg	 	 	 	 	 	 	 	 	 	
+Merchant id (restaurant items and orders should be clear for different restaurants).
+user menu fetch with merchant Id (which restaurant menu should show to user)
+data work according offline(Table number) and online(order Id) mode. 

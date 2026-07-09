@@ -7,7 +7,11 @@
     --light-bg: #FFF8F3; /* landing --light-bg */
     --text-main: #374151;
 }
-
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
 body {
     background-color: var(--light-bg);
     display: flex;
@@ -49,8 +53,8 @@ body {
 .footer-custom {
     background: var(--dark-color);
     color: rgba(255,255,255,0.85);
-    padding: 40px 0;
-    margin-top: auto;
+    padding: 80px 0 40px;
+    
 }
 
     .footer-custom h5 {

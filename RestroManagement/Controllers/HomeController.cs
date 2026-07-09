@@ -10,6 +10,10 @@ namespace RestroManagement.Controllers
         {
             return View();
         }
+        public IActionResult CommercialIndex()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {

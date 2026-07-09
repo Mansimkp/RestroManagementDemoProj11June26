@@ -145,19 +145,20 @@ namespace RestroManagement.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, lockoutOnFailure: false);
-                    TempData["SuccessMessage"] = "Restaurant Account created successfully! Please login.";
-
-                    return RedirectToAction("Login", "Account");
+                    var loginResult = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, lockoutOnFailure: false);
+                    if (loginResult.Succeeded)
+                        return RedirectToAction("Index", "Home", new { area = "Restaurant" });
+                    else return RedirectToAction("Login", "Account");
                 }
-
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in result.Errors)
+                        ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
             return View(model);
+
         }
 
         [HttpGet]
@@ -180,7 +181,7 @@ namespace RestroManagement.Controllers
                     _logger.LogInformation("User {UserName} logged in successfully.", model.LoginUserName);
                     return await ReDirectIfLoggedIn();
                 }
-                
+
                 else
                 {
                     _logger.LogWarning("Invalid login attempt for user: {UserName}", model.LoginUserName);
@@ -202,12 +203,12 @@ namespace RestroManagement.Controllers
                 if (roles.Contains("Guest"))
                     return RedirectToAction("Index", "Home", new { area = "Guest" });
 
-                else if (roles.Contains ("Restaurant"))
+                else if (roles.Contains("Restaurant"))
                     return RedirectToAction("Index", "Home", new { area = "Restaurant" });
 
                 else if (roles.Contains("SuperAdmin"))
                     return RedirectToAction("Index", "Home", new { area = "Admin" });
-                else 
+                else
                     return RedirectToAction("Index", "Home");
             }
             else
@@ -268,7 +269,7 @@ namespace RestroManagement.Controllers
 
 
         public async Task<List<City>> GetCities() => await _context.Cities.ToListAsync();
-        public async Task<List<City>> GetCitiesByStateId(int id) => 
+        public async Task<List<City>> GetCitiesByStateId(int id) =>
             await _context.Cities.Where(c => c.StateId == id).ToListAsync();
         public async Task<City> GetCity(int id) => await _context.Cities.FindAsync(id);
 

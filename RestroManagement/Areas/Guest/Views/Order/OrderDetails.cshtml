@@ -1,0 +1,96 @@
+﻿@model RestroManagement.DbModels.Order
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Order Details</h2>
+        <a asp-action="MyOrders" class="btn btn-secondary">
+            ← Back to My Orders
+        </a>
+    </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Customer Information</h5>
+                    <p>
+                        <strong>Name:</strong> @Model.CustomerName
+                    </p>
+                    <p>
+                        <strong>Mobile:</strong> @Model.MobileNumber
+                    </p>
+                    <p>
+                        <strong>Order Date:</strong>
+                        @Model.OrderDate.ToString("dd MMM yyyy hh:mm tt")
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>Order #@Model.Id</h5>
+                    <h4 class="text-success">
+                        ₹@Model.OrderTotal
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+            Ordered Items
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Food Item</th>
+                        <th>Portion</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.FoodItem?.Name</td>
+                            <td>@item.Portion?.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>₹@item.Price</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-4">
+
+        <div class="card-header">
+            Bill Summary
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <tr>
+                    <td>Subtotal</td>
+                    <td class="text-end">₹@Model.TotalPrice</td>
+                </tr>
+                <tr>
+                    <td>SGST</td>
+                    <td class="text-end">₹@Model.SGST</td>
+                </tr>
+                <tr>
+                    <td>CGST</td>
+                    <td class="text-end">₹@Model.CGST</td>
+                </tr>
+                <tr>
+                    <td>Packaging Charges</td>
+                    <td class="text-end">₹@Model.PackagingCharges</td>
+                </tr>
+                <tr class="table-success fw-bold">
+                    <td>Grand Total</td>
+                    <td class="text-end">
+                        ₹@Model.OrderTotal
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

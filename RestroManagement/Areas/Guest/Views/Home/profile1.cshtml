@@ -87,21 +87,7 @@
 
         <h2>Past Orders</h2>
 
-        @foreach (var item in (ViewBag.Orders ?? new List<Order>()))
-        {
-            <div class="order-card">
-
-                <h3>@item.RestaurantName</h3>
-
-                <p>@item.Address</p>
-
-                <span>@item.Status</span>
-
-                <h4>Total ₹@item.TotalAmount</h4>
-
-            </div>
-        }
-
+        
 
         <div class="summary">
 

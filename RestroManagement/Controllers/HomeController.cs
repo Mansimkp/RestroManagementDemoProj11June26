@@ -1,15 +1,31 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RestroManagement.Data;
 using RestroManagement.Models;
 using System.Diagnostics;
 
 namespace RestroManagement.Controllers
 {
 
-    public class HomeController : Controller
+    public class HomeController(AppDBContext appDBContext) : Controller
     {
+        private readonly AppDBContext _context = appDBContext;
+
         public IActionResult Index()
         {
             return View();
+        }
+        public async Task<IActionResult> RestaurantLandingPage()
+        {
+            var items = await _context.Fooditems
+              .Include(f => f.Portions)
+              .Include(f => f.Images)
+              .Include(f => f.Categories)
+                  .ThenInclude(fc => fc.Category)
+              .OrderByDescending(f => f.Created)
+              .ToListAsync();
+            return View(items);
+
         }
         public IActionResult CommercialIndex()
         {

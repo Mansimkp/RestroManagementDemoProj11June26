@@ -237,6 +237,9 @@ section {
     .hero-image {
         margin-top: 20px;
     }
+    .floating-stats-card {
+        display: none !important;
+    }
     .hero-buttons {
         justify-content: center !important;
         gap: 12px;

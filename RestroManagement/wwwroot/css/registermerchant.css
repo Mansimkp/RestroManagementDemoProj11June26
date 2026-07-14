@@ -27,7 +27,7 @@ body {
     animation: fadeIn 0.5s ease-out;
 }
 
-@@keyframes fadeIn {
+@keyframes fadeIn {
     from {
         opacity: 0;
     }
@@ -154,7 +154,7 @@ body {
     font-size: 14px;
 }
 
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .reg-container {
         flex-direction: column;
         max-width: 95%;

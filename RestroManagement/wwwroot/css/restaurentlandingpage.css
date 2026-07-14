@@ -669,7 +669,7 @@ header {
 
 /* Quantity controls when item is added */
 .qty-controls {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;

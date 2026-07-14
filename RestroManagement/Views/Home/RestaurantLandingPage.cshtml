@@ -280,8 +280,7 @@
                                 </button>
                                 
                                 <div class="qty-controls" 
-                                     x-show="getCartItemQty(@item.Id, '@(firstPortion?.Name ?? "Regular")') > 0"
-                                     style="display: flex;">
+                                     x-show="getCartItemQty(@item.Id, '@(firstPortion?.Name ?? "Regular")') > 0">
                                     <button class="qty-btn" x-on:click="adjustQty(@item.Id, '@(firstPortion?.Name ?? "Regular")', @(firstPortion?.Price ?? 0), -1)"><i class="bi bi-dash"></i></button>
                                     <span class="qty-number" x-text="getCartItemQty(@item.Id, '@(firstPortion?.Name ?? "Regular")')"></span>
                                     <button class="qty-btn" x-on:click="adjustQty(@item.Id, '@(firstPortion?.Name ?? "Regular")', @(firstPortion?.Price ?? 0), 1)"><i class="bi bi-plus"></i></button>
@@ -320,9 +319,9 @@
                         <div class="cart-item-price" x-text="'₹' + item.price.toFixed(2)"></div>
                     </div>
                     <div class="cart-item-actions">
-                        <button class="cart-item-btn" x-on:click="adjustItemQtyFromCart(item.itemId, item.portion, -1)" title="Decrease Quantity"><i class="bi bi-minus"></i></button>
+                        <button class="cart-item-btn" x-on:click="adjustItemQtyFromCart(item.itemId, item.portion, -1)" title="Decrease Quantity">&minus;</button>
                         <span class="cart-item-qty" x-text="item.quantity"></span>
-                        <button class="cart-item-btn" x-on:click="adjustItemQtyFromCart(item.itemId, item.portion, 1)" title="Increase Quantity"><i class="bi bi-plus"></i></button>
+                        <button class="cart-item-btn" x-on:click="adjustItemQtyFromCart(item.itemId, item.portion, 1)" title="Increase Quantity">&plus;</button>
                         <button class="cart-item-btn" x-on:click="removeItemFromCart(item.itemId, item.portion)" style="margin-left: 8px; color: #dc3545; border-color: rgba(220, 53, 69, 0.2);" title="Remove Item"><i class="bi bi-trash"></i></button>
                     </div>
                 </div>
@@ -493,13 +492,6 @@
                 // Set selected portion for an item
                 setPortion(itemId, name, price) {
                     this.selectedPortions[itemId] = { name, price };
-                    
-                    // If item is already in the cart, sync its portion and price
-                    const cartItem = this.cart.find(i => i.itemId === itemId);
-                    if (cartItem) {
-                        cartItem.portion = name;
-                        cartItem.price = price;
-                    }
                 },
 
                 // Get current price of an item

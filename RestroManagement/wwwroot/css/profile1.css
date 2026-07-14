@@ -1,4 +1,4 @@
-﻿* {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -70,16 +70,21 @@ body {
 
 .profile-header {
     background: #3f6f8f;
-    height: 270px;
+    min-height: 270px;
+    height: auto;
     color: white;
+    padding-bottom: 40px;
 }
 
     .profile-header .container {
-        width: 1200px;
+        width: 100%;
+        max-width: 1200px;
         margin: auto;
         display: flex;
         justify-content: space-between;
         padding-top: 60px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 
 .left {
@@ -114,9 +119,12 @@ body {
 /*================ MAIN ================*/
 
 .main-area {
-    width: 1200px;
+    width: 100%;
+    max-width: 1200px;
     margin: -80px auto 50px;
     display: flex;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 /*================ SIDEBAR ================*/

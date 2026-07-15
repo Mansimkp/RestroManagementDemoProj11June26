@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -43,6 +43,10 @@ namespace RestroManagement.DbModels.User
         [Required(ErrorMessage = "Please select a role")]
         public string ?UserRole { get; set; } = string.Empty;
 
+        [Display(Name = "Profile Picture")]
+        public string? ProfilePicture { get; set; }
 
+        [Display(Name = "Address")]
+        public string? Address { get; set; }
     }
 }

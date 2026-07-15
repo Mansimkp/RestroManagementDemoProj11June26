@@ -11,6 +11,7 @@ using RestroManagement.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -39,11 +40,14 @@ namespace RestroManagement.Areas.Guest.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            ViewBag.Role = roles.FirstOrDefault() ?? "Guest";
+
             var orders = dBContext.Orders
                 .Where(x => x.UserId == user.Id.ToString())
                       .ToList();
@@ -53,27 +57,93 @@ namespace RestroManagement.Areas.Guest.Controllers
             return View(user);
         }
 
-
         public async Task<IActionResult> Profile()
         {
             var currentUser = await _userManager.GetUserAsync(User);
 
-
             if (currentUser == null)
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Account");
             }
+
+            var roles = await _userManager.GetRolesAsync(currentUser);
+            ViewBag.Role = roles.FirstOrDefault() ?? "Guest";
 
             var model = new profile
             {
-
                 Id = currentUser.Id,
                 FName = currentUser.FName,
                 LName = currentUser.LName,
                 Email = currentUser.Email,
-                PhoneNumber = currentUser.PhoneNumber
+                PhoneNumber = currentUser.PhoneNumber ?? string.Empty,
+                Address = currentUser.Address ?? string.Empty,
+                ProfileImage = currentUser.ProfilePicture
             };
 
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(profile model)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (ModelState.IsValid)
+            {
+                currentUser.FName = model.FName;
+                currentUser.LName = model.LName;
+                currentUser.PhoneNumber = model.PhoneNumber;
+                currentUser.Address = model.Address;
+
+                if (model.ProfileImageFile != null && model.ProfileImageFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profile_pics");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.ProfileImageFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.ProfileImageFile.CopyToAsync(fileStream);
+                    }
+
+                    // Delete old profile picture if exists and is not default
+                    if (!string.IsNullOrEmpty(currentUser.ProfilePicture))
+                    {
+                        var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", currentUser.ProfilePicture.TrimStart('/'));
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            try { System.IO.File.Delete(oldFilePath); } catch { /* ignore if locked */ }
+                        }
+                    }
+
+                    currentUser.ProfilePicture = "/uploads/profile_pics/" + uniqueFileName;
+                }
+
+                var result = await _userManager.UpdateAsync(currentUser);
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Profile updated successfully!";
+                    return RedirectToAction("Profile1");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            var roles = await _userManager.GetRolesAsync(currentUser);
+            ViewBag.Role = roles.FirstOrDefault() ?? "Guest";
             return View(model);
         }
 

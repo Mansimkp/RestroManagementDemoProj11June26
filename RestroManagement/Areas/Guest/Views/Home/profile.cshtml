@@ -1,121 +1,190 @@
-@using RestroManagement.ViewModels
 @model RestroManagement.ViewModels.profile
+@{
+    ViewData["Title"] = "Edit Profile";
+    var profilePic = !string.IsNullOrEmpty(Model.ProfileImage) 
+        ? Model.ProfileImage 
+        : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+    var userRole = ViewBag.Role as string ?? "Guest";
+}
 
-<div class="container mt-5">
-
+<div class="container py-4">
     <div class="row justify-content-center">
-
-        <div class="col-lg-8">
-
-            <div class="card shadow-lg border-0 rounded-4">
-
-                <div class="card-header bg-danger text-white text-center py-4">
-                    <h3>Guest Profile</h3>
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <!-- Header Banner -->
+                <div class="profile-cover px-4 py-5 text-white position-relative" style="background: linear-gradient(135deg, #ff6b6b 0%, #fc8019 100%);">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-white p-1 rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                            <img id="profileImagePreview" src="@profilePic" alt="Profile Image" class="w-100 h-100 rounded-circle object-fit-cover" />
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0">Edit Your Profile</h3>
+                            <p class="mb-0 text-white-50">Update your account information and preferences</p>
+                        </div>
+                    </div>
                 </div>
 
-                <form asp-action="Profile" method="post">
+                <form asp-action="Profile" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
-                    <div class="card-body">
-
-                        <div class="row">
-
-                            <!-- Profile Image -->
-                            <div class="col-md-4 text-center">
-
-                                <img src="https://i.pravatar.cc/200?img=12"
-                                     class="img-fluid rounded-circle border border-4 border-primary"
-                                     width="180" />
-                                <p class="fw-bold mt-3">
-                                    @Model.FName @Model.LName
-                                </p>
-
-                                <span class="badge bg-success">
-                                    Guest
-                                </span>
-
-                            </div>
-
-                            <!-- Profile Details -->
-                            <div class="col-md-8">
-                                <div class="table-responsive">
-                                    <table class="table table-borderless">
-
-                                        <tr>
-                                            <th>Guest ID</th>
-                                            <td>GST@Model.Id</td>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Email</th>
-                                            <td>@Model.Email</td>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Phone</th>
-                                            <td>@Model.PhoneNumber</td>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Gender</th>
-                                            <td>
-                                                <select asp-for="Gender" class="form-select">
-                                                    <option value="">Select Gender</option>
-                                                    <option value="Male">Male</option>
-                                                    <option value="Female">Female</option>
-                                                    <option value="Other">Other</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Date of Birth</th>
-                                            <td>
-                                                <input asp-for="DateOfBirth"
-                                                       type="date"
-                                                       class="form-control" />
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Address</th>
-                                            <td>
-                                                <textarea asp-for="Address"
-                                                          class="form-control"
-                                                          rows="3"></textarea>
-                                            </td>
-                                        </tr>
-
-
-                                    </table>
+                        <div class="row g-4">
+                            <!-- Left Column: Image Upload -->
+                            <div class="col-md-4 text-center border-end pe-md-4">
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-dark d-block mb-3">Profile Picture</label>
+                                    <div class="position-relative d-inline-block mx-auto mb-3">
+                                        <div class="bg-light p-1 rounded-circle border shadow-sm" style="width: 150px; height: 150px;">
+                                            <img id="avatarPreview" src="@profilePic" alt="Avatar Preview" class="w-100 h-100 rounded-circle object-fit-cover" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="ProfileImageFile" class="btn btn-outline-orange rounded-pill px-4 btn-sm">
+                                            <i class="bi bi-camera me-1"></i> Choose Photo
+                                        </label>
+                                        <input type="file" asp-for="ProfileImageFile" class="form-control d-none" accept="image/*" onchange="previewImage(this)" />
+                                        <span asp-validation-for="ProfileImageFile" class="text-danger small d-block mt-1"></span>
+                                    </div>
+                                    <p class="text-muted small">Supported formats: JPG, PNG, GIF. Max file size: 2MB.</p>
                                 </div>
                             </div>
 
+                            <!-- Right Column: Form Fields -->
+                            <div class="col-md-8 ps-md-4">
+                                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-gear-fill me-2 text-orange"></i> Account Settings</h5>
+
+                                <div class="row g-3">
+                                    <!-- First Name -->
+                                    <div class="col-sm-6">
+                                        <label asp-for="FName" class="form-label text-muted small fw-semibold">First Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-person"></i></span>
+                                            <input asp-for="FName" class="form-control border-start-0 ps-0" placeholder="First name" required />
+                                        </div>
+                                        <span asp-validation-for="FName" class="text-danger small"></span>
+                                    </div>
+
+                                    <!-- Last Name -->
+                                    <div class="col-sm-6">
+                                        <label asp-for="LName" class="form-label text-muted small fw-semibold">Last Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-person"></i></span>
+                                            <input asp-for="LName" class="form-control border-start-0 ps-0" placeholder="Last name" required />
+                                        </div>
+                                        <span asp-validation-for="LName" class="text-danger small"></span>
+                                    </div>
+
+                                    <!-- Email (Disabled/Read-only representation) -->
+                                    <div class="col-12">
+                                        <label asp-for="Email" class="form-label text-muted small fw-semibold">Email Address (Cannot be changed)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-envelope"></i></span>
+                                            <input asp-for="Email" class="form-control border-start-0 ps-0 bg-light" readonly />
+                                        </div>
+                                    </div>
+
+                                    <!-- Phone Number -->
+                                    <div class="col-12">
+                                        <label asp-for="PhoneNumber" class="form-label text-muted small fw-semibold">Phone Number</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-telephone"></i></span>
+                                            <input asp-for="PhoneNumber" class="form-control border-start-0 ps-0" placeholder="10-digit mobile number" required />
+                                        </div>
+                                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="col-12">
+                                        <label asp-for="Address" class="form-label text-muted small fw-semibold">Delivery Address</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-geo-alt"></i></span>
+                                            <textarea asp-for="Address" class="form-control border-start-0 ps-0" rows="3" placeholder="Enter your full street address, flat/house number, and landmark" required></textarea>
+                                        </div>
+                                        <span asp-validation-for="Address" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
 
-                    <div class="card-footer text-center">
-
-                        <button type="submit" class="btn btn-primary">
-                            Save Changes
+                    <!-- Footer Action Buttons -->
+                    <div class="card-footer bg-light px-4 py-3 d-flex justify-content-end gap-2">
+                        <a asp-action="Profile1" class="btn btn-outline-secondary rounded-pill px-4">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-orange rounded-pill px-4">
+                            <i class="bi bi-save me-1"></i> Save Changes
                         </button>
-
-                        <a asp-action="MyReservations" class="btn btn-success">
-                            My Reservations
-                        </a>
-
-                        <a asp-action="Logout" class="btn btn-danger">
-                            Logout
-                        </a>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Real-time image upload preview
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                    document.getElementById('profileImagePreview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}
+
+<style>
+    /* Styling for the Orange Theme */
+    .text-orange {
+        color: #fc8019 !important;
+    }
+    .btn-orange {
+        background-color: #fc8019;
+        border-color: #fc8019;
+        color: #fff;
+        transition: all 0.2s ease-in-out;
+    }
+    .btn-orange:hover {
+        background-color: #e56f0e;
+        border-color: #e56f0e;
+        color: #fff;
+    }
+    .btn-outline-orange {
+        color: #fc8019;
+        border-color: #fc8019;
+        background-color: transparent;
+        transition: all 0.2s ease-in-out;
+    }
+    .btn-outline-orange:hover {
+        color: #fff;
+        background-color: #fc8019;
+        border-color: #fc8019;
+    }
+    
+    /* Form controls shadow and border */
+    .form-control:focus {
+        border-color: #fc8019;
+        box-shadow: 0 0 0 0.25rem rgba(252, 128, 25, 0.25);
+    }
+    .input-group-text {
+        border-right: none;
+    }
+    .form-control {
+        border-left: none;
+    }
+    .input-group:focus-within .input-group-text {
+        border-color: #fc8019;
+        color: #fc8019 !important;
+    }
+</style>

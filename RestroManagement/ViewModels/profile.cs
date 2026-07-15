@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace RestroManagement.ViewModels
 {
@@ -22,5 +23,6 @@ namespace RestroManagement.ViewModels
             public int Reservations { get; set; }
             public int FavoriteItems { get; set; }
         
+        public IFormFile? ProfileImageFile { get; set; }
     }
 }

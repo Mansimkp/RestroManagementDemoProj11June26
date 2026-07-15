@@ -34,7 +34,8 @@
     <form asp-controller="Home" asp-action="AddMultipleToCart" method="post" id="menuForm">
 
         <div class="search-filter-section">
-            <div class="row g-3 align-items-center">
+            <!-- Row 1: Search, Veg/Non-Veg Filter, and Proceed Button -->
+            <div class="row g-3 align-items-center mb-3">
                 <!-- Search Input -->
                 <div class="col-md-4">
                     <div class="search-input-wrapper">
@@ -43,15 +44,18 @@
                     </div>
                 </div>
 
-                <!-- Category Filters -->
-                <div class="col-md-4 text-center">
-
-                    <div class="category-pills justify-content-center">
-                        <button type="button" class="category-pill active" onclick="selectCategory('All', this)">All</button>
-                        @foreach (var cat in categories)
-                        {
-                            <button type="button" class="category-pill" onclick="selectCategory('@cat.Name', this)">@cat.Name</button>
-                        }
+                <!-- Veg / Non-Veg Toggle -->
+                <div class="col-md-4 d-flex justify-content-md-center justify-content-start">
+                    <div class="dietary-pills">
+                        <button type="button" class="dietary-pill active" data-diet="all" onclick="selectDietary('All', this)">
+                            All
+                        </button>
+                        <button type="button" class="dietary-pill" data-diet="veg" onclick="selectDietary('Veg', this)">
+                            <i class="bi bi-circle-fill text-success" style="font-size: 0.6rem;"></i> Veg
+                        </button>
+                        <button type="button" class="dietary-pill" data-diet="nonveg" onclick="selectDietary('NonVeg', this)">
+                            <i class="bi bi-triangle-fill text-danger" style="font-size: 0.6rem;"></i> Non-Veg
+                        </button>
                     </div>
                 </div>
 
@@ -60,6 +64,22 @@
                     <button type="submit" class="btn btn-secondary btn-lg w-100 py-3 fw-bold" id="btnProceedToCart" disabled style="border-radius: 12px;">
                         <i class="bi bi-cart-check-fill"></i> Proceed to Billing (<span id="selectedCountBadge" data-cart="@ViewBag.CartCount">@ViewBag.CartCount</span>)
                     </button>
+                </div>
+            </div>
+
+            <!-- Row 2: Category Filters -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-start">
+                        <span class="fw-bold text-muted me-2 small text-uppercase">Categories:</span>
+                        <div class="category-pills m-0">
+                            <button type="button" class="category-pill active" onclick="selectCategory('All', this)">All</button>
+                            @foreach (var cat in categories)
+                            {
+                                <button type="button" class="category-pill" onclick="selectCategory('@cat.Name', this)">@cat.Name</button>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,7 +94,8 @@
                 <div class="col-lg-3 col-md-6 col-sm-12 mb-4 food-card-container" 
                      data-categories="@itemCategories"
                      data-name="@items.Name.ToLower()"
-                     data-desc="@items.Description.ToLower()">
+                     data-desc="@items.Description.ToLower()"
+                     data-dietary="@items.DietaryPreference.ToString()">
 
                     <div class="food-card">
                         <!-- Images and Badges -->
@@ -180,6 +201,7 @@
 
 <script>
     let activeCategory = 'All';
+    let activeDietary = 'All';
 
     // Portion select change callback
     function updatePortion(selectElement, itemId) {
@@ -251,7 +273,17 @@
         filterMenu();
     }
 
-    // Combined filtering (Search + Category)
+    // Dietary selection filter
+    function selectDietary(dietaryName, element) {
+        // Toggle active status of dietary pills
+        document.querySelectorAll('.dietary-pill').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+
+        activeDietary = dietaryName;
+        filterMenu();
+    }
+
+    // Combined filtering (Search + Category + Dietary)
     function filterMenu() {
         let searchQuery = document.getElementById('menuSearch').value.toLowerCase().trim();
         let cards = document.querySelectorAll('.food-card-container');
@@ -261,11 +293,15 @@
             let categories = card.getAttribute('data-categories').split(',');
             let name = card.getAttribute('data-name');
             let desc = card.getAttribute('data-desc');
+            let dietary = card.getAttribute('data-dietary');
 
             let matchesCategory = (activeCategory === 'All') || categories.includes(activeCategory);
             let matchesSearch = !searchQuery || name.includes(searchQuery) || desc.includes(searchQuery);
+            let matchesDietary = (activeDietary === 'All') ||
+                (activeDietary === 'Veg' && (dietary === 'Vegetarian' || dietary === 'Vegan')) ||
+                (activeDietary === 'NonVeg' && (dietary === 'NonVegetarian' || dietary === 'ContainsEgg'));
 
-            if (matchesCategory && matchesSearch) {
+            if (matchesCategory && matchesSearch && matchesDietary) {
                 card.classList.remove('d-none');
                 visibleCount++;
             } else {
@@ -280,15 +316,14 @@
         } else {
             emptyState.classList.add('d-none');
         }
-            window.onload = function () {
+    }
 
+    window.onload = function () {
         let cartCount = parseInt(document.getElementById("selectedCountBadge").innerText) || 0;
-
         if (cartCount > 0) {
             document.getElementById("btnProceedToCart").disabled = false;
             document.getElementById("btnProceedToCart").classList.remove("btn-secondary");
             document.getElementById("btnProceedToCart").classList.add("btn-danger");
         }
     };
-    }
 </script>

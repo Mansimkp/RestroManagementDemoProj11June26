@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RestroManagement.DbModels.Order>
+@model IEnumerable<RestroManagement.DbModels.Order>
 @{
     ViewData["Title"] = "Home";
 }
@@ -76,7 +76,7 @@
 
         <div class="col-md-3">
             <div class="card shadow border-0 text-center p-4">
-                <h3 class="text-danger">18</h3>
+                <h3 class="text-danger">@ViewBag.PendingOrderCount</h3>
                 <p>Pending Orders</p>
             </div>
         </div>

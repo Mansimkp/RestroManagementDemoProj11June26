@@ -115,6 +115,53 @@
         box-shadow: 0 4px 12px rgba(230, 57, 70, 0.25);
     }
 
+/* Dietary Preference Filters */
+.dietary-pills {
+    display: flex;
+    gap: 12px;
+}
+
+.dietary-pill {
+    border: 2px solid #E5E7EB;
+    background: white;
+    color: #4B5563;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+    .dietary-pill:hover {
+        border-color: #9CA3AF;
+        color: var(--neutral-dark);
+    }
+
+    .dietary-pill.active[data-diet="all"] {
+        background: var(--neutral-dark);
+        border-color: var(--neutral-dark);
+        color: white;
+        box-shadow: 0 4px 12px rgba(31, 41, 55, 0.25);
+    }
+
+    .dietary-pill.active[data-diet="veg"] {
+        background: var(--veg-green);
+        border-color: var(--veg-green);
+        color: white;
+        box-shadow: 0 4px 12px rgba(46, 196, 182, 0.25);
+    }
+
+    .dietary-pill.active[data-diet="nonveg"] {
+        background: var(--nonveg-red);
+        border-color: var(--nonveg-red);
+        color: white;
+        box-shadow: 0 4px 12px rgba(230, 57, 70, 0.25);
+    }
+
 /* Food Cards Grid */
 .food-card {
     background: white;

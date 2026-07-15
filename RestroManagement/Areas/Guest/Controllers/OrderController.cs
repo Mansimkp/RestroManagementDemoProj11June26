@@ -192,5 +192,21 @@ namespace RestroManagement.Areas.Guest.Controllers
 
             return RedirectToAction("Menu", "Home");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderStatus(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Challenge();
+            }
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id && o.UserId == user.Id.ToString());
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return Json(new { id = order.Id, status = order.Status.ToString(), statusValue = (int)order.Status });
+        }
     }
 }

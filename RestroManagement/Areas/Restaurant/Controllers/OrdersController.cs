@@ -102,5 +102,19 @@ namespace RestroManagement.Areas.Restaurant.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(int id, RestroManagement.DbModels.OrderStatus status)
+        {
+            var merchantId = _accountService.GetLoggedInUserMerchantId() ?? 0;
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id && o.MerchantId == merchantId);
+            if (order != null)
+            {
+                order.Status = status;
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, newStatus = status.ToString(), statusValue = (int)status });
+            }
+            return Json(new { success = false, message = "Order not found" });
+        }
     }
 }

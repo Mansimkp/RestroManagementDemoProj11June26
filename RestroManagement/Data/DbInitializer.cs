@@ -11,6 +11,18 @@ namespace RestroManagement.Data
         {
             context.Database.EnsureCreated();
 
+            // Ensure Status column exists in Orders table
+            try
+            {
+                context.Database.ExecuteSqlRaw(
+                    "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Orders]') AND name = N'Status') " +
+                    "ALTER TABLE [Orders] ADD [Status] int NOT NULL DEFAULT 0;");
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine($"Database Migration Check Error: {ex.Message}");
+            }
+
             // Seed default Merchant if not present
             var merchant = context.Merchants.FirstOrDefault();
             if (merchant == null)

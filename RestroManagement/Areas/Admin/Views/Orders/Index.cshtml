@@ -17,6 +17,7 @@
 					<th>OrderItem</th>
 					<th>Date</th>
 					<th>Total</th>
+					<th>Status</th>
 					<th class="text-end">Actions</th>
 				</tr>
 			</thead>
@@ -46,6 +47,42 @@
 
 						<td>@item.OrderDate.ToString("g")</td>
 						<td>₹@item.OrderTotal</td>
+						<td>
+                            @{
+                                string statusBadgeClass = "bg-secondary";
+                                string statusText = item.Status.ToString();
+                                switch (item.Status)
+                                {
+                                    case RestroManagement.DbModels.OrderStatus.Pending:
+                                        statusBadgeClass = "bg-warning-subtle text-warning border border-warning";
+                                        statusText = "Pending";
+                                        break;
+                                    case RestroManagement.DbModels.OrderStatus.Accepted:
+                                        statusBadgeClass = "bg-info-subtle text-info border border-info";
+                                        statusText = "Accepted";
+                                        break;
+                                    case RestroManagement.DbModels.OrderStatus.Preparing:
+                                        statusBadgeClass = "bg-primary-subtle text-primary border border-primary";
+                                        statusText = "Preparing";
+                                        break;
+                                    case RestroManagement.DbModels.OrderStatus.Ready:
+                                        statusBadgeClass = "bg-success-subtle text-success border border-success";
+                                        statusText = "Ready";
+                                        break;
+                                    case RestroManagement.DbModels.OrderStatus.Delivered:
+                                        statusBadgeClass = "bg-success text-white";
+                                        statusText = "Delivered";
+                                        break;
+                                    case RestroManagement.DbModels.OrderStatus.Cancelled:
+                                        statusBadgeClass = "bg-danger-subtle text-danger border border-danger";
+                                        statusText = "Cancelled";
+                                        break;
+                                }
+                            }
+                            <span class="badge @statusBadgeClass px-3 py-2 rounded fw-semibold">
+                                @statusText
+                            </span>
+						</td>
 						<td class="text-end">
 							<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-2">
 								<i class="bi bi-eye"></i> View
@@ -60,7 +97,7 @@
 				}
 				@if (!Model.Any())
 				{
-					<tr><td colspan="7" class="text-center py-5 text-muted">No orders found.</td></tr>
+					<tr><td colspan="8" class="text-center py-5 text-muted">No orders found.</td></tr>
 				}
 			</tbody>
 		</table>

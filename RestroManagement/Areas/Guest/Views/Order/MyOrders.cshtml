@@ -33,8 +33,39 @@
                                 @order.OrderDate.ToString("dd MMM yyyy • hh:mm tt")
                             </div>
                         </div>
-                        <span class="badge bg-success status">
-                            Confirmed
+                        @{
+                            string statusBadgeClass = "bg-secondary";
+                            string statusText = order.Status.ToString();
+                            switch (order.Status)
+                            {
+                                case RestroManagement.DbModels.OrderStatus.Pending:
+                                    statusBadgeClass = "bg-warning text-dark";
+                                    statusText = "Pending Confirmation";
+                                    break;
+                                case RestroManagement.DbModels.OrderStatus.Accepted:
+                                    statusBadgeClass = "bg-info text-dark";
+                                    statusText = "Order Confirmed";
+                                    break;
+                                case RestroManagement.DbModels.OrderStatus.Preparing:
+                                    statusBadgeClass = "bg-primary";
+                                    statusText = "Preparing Food";
+                                    break;
+                                case RestroManagement.DbModels.OrderStatus.Ready:
+                                    statusBadgeClass = "bg-success";
+                                    statusText = "Ready for Pickup";
+                                    break;
+                                case RestroManagement.DbModels.OrderStatus.Delivered:
+                                    statusBadgeClass = "bg-success";
+                                    statusText = "Delivered";
+                                    break;
+                                case RestroManagement.DbModels.OrderStatus.Cancelled:
+                                    statusBadgeClass = "bg-danger";
+                                    statusText = "Cancelled";
+                                    break;
+                            }
+                        }
+                        <span class="badge @statusBadgeClass status px-3 py-2 rounded-pill fw-bold">
+                            @statusText
                         </span>
                     </div>
                     <hr />

@@ -1,4 +1,4 @@
-﻿@model RestroManagement.DbModels.Order
+@model RestroManagement.DbModels.Order
 
 @{
     ViewData["Title"] = "Order Details";
@@ -44,6 +44,21 @@
     </div>
     <div class="col-lg-4">
         <div class="card p-4 mb-4">
+            <h5 class="fw-bold mb-3">Order Status</h5>
+            <div class="mb-3">
+                <select id="detail-status-select" class="form-select fw-bold" data-order-id="@Model.Id" style="border-radius: 8px; padding: 10px;">
+                    <option value="0" selected="@(Model.Status == RestroManagement.DbModels.OrderStatus.Pending ? "selected" : null)">Pending</option>
+                    <option value="1" selected="@(Model.Status == RestroManagement.DbModels.OrderStatus.Accepted ? "selected" : null)">Accepted</option>
+                    <option value="2" selected="@(Model.Status == RestroManagement.DbModels.OrderStatus.Preparing ? "selected" : null)">Preparing</option>
+                    <option value="3" selected="@(Model.Status == RestroManagement.DbModels.OrderStatus.Ready ? "selected" : null)">Ready</option>
+                    <option value="4" selected="@(Model.Status == RestroManagement.DbModels.OrderStatus.Delivered ? "selected" : null)">Delivered</option>
+                    <option value="5" selected="@(Model.Status == RestroManagement.DbModels.OrderStatus.Cancelled ? "selected" : null)">Cancelled</option>
+                </select>
+            </div>
+            <p class="small text-muted mb-0">Changing this will update the customer's live tracking screen in real time.</p>
+        </div>
+
+        <div class="card p-4 mb-4">
             <h5 class="fw-bold mb-4">Customer Info</h5>
             <p class="mb-1 text-muted">Name</p>
             <p class="fw-bold mb-3">@Model.CustomerName</p>
@@ -79,3 +94,72 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            function applySelectStyle(select) {
+                var val = parseInt($(select).val());
+                $(select).removeClass('bg-warning-subtle text-warning border-warning bg-info-subtle text-info border-info bg-primary-subtle text-primary border-primary bg-success-subtle text-success border-success bg-danger-subtle text-danger border-danger');
+                if (val === 0) {
+                    $(select).addClass('bg-warning-subtle text-warning border-warning');
+                } else if (val === 1) {
+                    $(select).addClass('bg-info-subtle text-info border-info');
+                } else if (val === 2) {
+                    $(select).addClass('bg-primary-subtle text-primary border-primary');
+                } else if (val === 3) {
+                    $(select).addClass('bg-success-subtle text-success border-success');
+                } else if (val === 4) {
+                    $(select).addClass('bg-success-subtle text-success border-success');
+                } else if (val === 5) {
+                    $(select).addClass('bg-danger-subtle text-danger border-danger');
+                }
+            }
+
+            var statusSelect = $('#detail-status-select');
+            applySelectStyle(statusSelect);
+
+            function showNotification(message, type = 'success') {
+                var toast = $('<div class="toast-notification bg-dark text-white p-3 rounded shadow" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: none; min-width: 250px; border-left: 5px solid #10B981; font-weight: 600;">' + message + '</div>');
+                if (type === 'danger') {
+                    toast.css('border-left', '5px solid #EF4444');
+                } else if (type === 'warning') {
+                    toast.css('border-left', '5px solid #F59E0B');
+                } else if (type === 'info') {
+                    toast.css('border-left', '5px solid #3B82F6');
+                }
+                $('body').append(toast);
+                toast.fadeIn(300).delay(2500).fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }
+
+            statusSelect.change(function() {
+                var selectEl = this;
+                var orderId = $(selectEl).data('order-id');
+                var newStatus = $(selectEl).val();
+
+                $.ajax({
+                    url: '/Restaurant/Orders/UpdateStatus',
+                    type: 'POST',
+                    data: {
+                        id: orderId,
+                        status: newStatus
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            applySelectStyle(selectEl);
+                            showNotification('Order #' + orderId + ' updated to ' + response.newStatus, 'success');
+                        } else {
+                            showNotification('Failed to update: ' + response.message, 'danger');
+                        }
+                    },
+                    error: function() {
+                        showNotification('An error occurred while updating status.', 'danger');
+                    }
+                });
+            });
+        });
+    </script>
+}
+

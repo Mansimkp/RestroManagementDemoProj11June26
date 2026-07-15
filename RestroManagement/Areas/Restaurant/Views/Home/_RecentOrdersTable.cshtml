@@ -1,0 +1,79 @@
+@model IEnumerable<RestroManagement.DbModels.Order>
+
+<div class="card p-2">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Mobile</th>
+                    <th>Order Items</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">#@item.Id</td>
+                        <td class="fw-bold">@item.CustomerName</td>
+                        <td>@item.MobileNumber</td>
+
+                        @if (item.Items == null || item.Items.Count == 0)
+                        {
+                            <td>No Items added</td>
+                        }
+                        else if (item.Items.Count == 1)
+                        {
+                            <td>@item.Items.First().FoodItem.Name</td>
+                        }
+                        else
+                        {
+                            <td>
+                                @item.Items.First().FoodItem.Name (+@(item.Items.Count - 1))
+                            </td>
+                        }
+
+                        <td>@item.OrderDate.ToString("g")</td>
+                        <td>₹@item.OrderTotal</td>
+                        <td>
+                            <select class="form-select form-select-sm status-select fw-bold" data-order-id="@item.Id" style="width: 150px; border-radius: 8px;">
+                                <option value="0" selected="@(item.Status == RestroManagement.DbModels.OrderStatus.Pending ? "selected" : null)">Pending</option>
+                                <option value="1" selected="@(item.Status == RestroManagement.DbModels.OrderStatus.Accepted ? "selected" : null)">Accepted</option>
+                                <option value="2" selected="@(item.Status == RestroManagement.DbModels.OrderStatus.Preparing ? "selected" : null)">Preparing</option>
+                                <option value="3" selected="@(item.Status == RestroManagement.DbModels.OrderStatus.Ready ? "selected" : null)">Ready</option>
+                                <option value="4" selected="@(item.Status == RestroManagement.DbModels.OrderStatus.Delivered ? "selected" : null)">Delivered</option>
+                                <option value="5" selected="@(item.Status == RestroManagement.DbModels.OrderStatus.Cancelled ? "selected" : null)">Cancelled</option>
+                            </select>
+                        </td>
+
+                        <td class="text-end">
+                            <a asp-area="Restaurant"
+                               asp-controller="Orders"
+                               asp-action="dashboarddetails"
+                               asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-info me-2">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No orders found for this date.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+</div>

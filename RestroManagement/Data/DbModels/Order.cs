@@ -56,5 +56,7 @@ namespace RestroManagement.DbModels
         [NotMapped]
         public float PriceAfterDiscount { get { return TotalPrice + Discount; } }
 
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
     }
 }
+

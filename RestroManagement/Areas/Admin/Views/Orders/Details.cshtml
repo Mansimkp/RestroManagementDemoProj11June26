@@ -42,6 +42,44 @@
         </div>
     </div>
     <div class="col-lg-4">
+        <div class="card p-4 mb-4 text-center">
+            <h5 class="fw-bold mb-3">Order Status</h5>
+            @{
+                string statusBadgeClass = "bg-secondary";
+                string statusText = Model.Status.ToString();
+                switch (Model.Status)
+                {
+                    case RestroManagement.DbModels.OrderStatus.Pending:
+                        statusBadgeClass = "bg-warning-subtle text-warning border border-warning";
+                        statusText = "Pending";
+                        break;
+                    case RestroManagement.DbModels.OrderStatus.Accepted:
+                        statusBadgeClass = "bg-info-subtle text-info border border-info";
+                        statusText = "Accepted";
+                        break;
+                    case RestroManagement.DbModels.OrderStatus.Preparing:
+                        statusBadgeClass = "bg-primary-subtle text-primary border border-primary";
+                        statusText = "Preparing";
+                        break;
+                    case RestroManagement.DbModels.OrderStatus.Ready:
+                        statusBadgeClass = "bg-success-subtle text-success border border-success";
+                        statusText = "Ready";
+                        break;
+                    case RestroManagement.DbModels.OrderStatus.Delivered:
+                        statusBadgeClass = "bg-success text-white";
+                        statusText = "Delivered";
+                        break;
+                    case RestroManagement.DbModels.OrderStatus.Cancelled:
+                        statusBadgeClass = "bg-danger-subtle text-danger border border-danger";
+                        statusText = "Cancelled";
+                        break;
+                }
+            }
+            <span class="badge @statusBadgeClass px-4 py-2.5 rounded-pill fw-bold fs-6">
+                @statusText
+            </span>
+        </div>
+
         <div class="card p-4 mb-4">
             <h5 class="fw-bold mb-4">Customer Info</h5>
             <p class="mb-1 text-muted">Name</p>
